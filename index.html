@@ -128,28 +128,112 @@
             font-weight: 300;
         }
 
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: var(--accent-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
-        }
-
-        /* Services Section */
-        .services {
+        /* About Section */
+        .about {
             padding: 5rem 2rem;
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        .about-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .about-intro {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .intro-text {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .owners-section {
+            margin-top: 3rem;
+        }
+
+        .owners-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+
+        .owners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .owner-card {
+            background: var(--secondary-color);
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .owner-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .owner-photo {
+            margin-bottom: 2rem;
+        }
+
+        .photo-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 107, 53, 0.1);
+            border: 3px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .photo-placeholder i {
+            font-size: 4rem;
+            color: var(--accent-color);
+        }
+
+        .owner-card:hover .photo-placeholder {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .owner-info h4 {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .owner-title {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .owner-description {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 1rem;
         }
 
         .section-title {
@@ -157,6 +241,13 @@
             font-size: 3rem;
             margin-bottom: 3rem;
             color: var(--accent-color);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .services-grid {
@@ -196,38 +287,6 @@
             line-height: 1.6;
         }
 
-        /* Stats Section */
-        .stats {
-            background: var(--secondary-color);
-            padding: 4rem 2rem;
-        }
-
-        .stats-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            text-align: center;
-        }
-
-        .stat-item {
-            padding: 1rem;
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            color: var(--text-light);
-            margin-top: 0.5rem;
-        }
-
         /* Portfolio Section */
         .portfolio {
             padding: 5rem 2rem;
@@ -248,11 +307,13 @@
             overflow: hidden;
             transition: all 0.3s ease;
             cursor: pointer;
+            border: 1px solid rgba(255, 107, 53, 0.1);
         }
 
         .portfolio-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
         }
 
         .portfolio-content {
@@ -365,16 +426,22 @@
                 grid-template-columns: 1fr;
             }
 
-            .about-details {
+            .owners-grid {
                 grid-template-columns: 1fr;
+                gap: 2rem;
             }
 
-            .about-features {
-                grid-template-columns: repeat(2, 1fr);
+            .owner-card {
+                padding: 2rem;
             }
 
-            .stats-container {
-                grid-template-columns: repeat(2, 1fr);
+            .photo-placeholder {
+                width: 120px;
+                height: 120px;
+            }
+
+            .photo-placeholder i {
+                font-size: 3rem;
             }
         }
 
@@ -415,6 +482,7 @@
             <nav>
                 <ul class="nav-menu">
                     <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
                     <li><a href="#services">Services</a></li>
                     <li><a href="#portfolio">Portfolio</a></li>
                     <li><a href="#contact">Contact</a></li>
@@ -431,6 +499,47 @@
         <div class="hero-content fade-in-up">
             <h1>SOUNDMAKING</h1>
             <p class="tagline">PROFESSIONAL AUDIO POST-PRODUCTION THAT BRINGS YOUR VISION TO LIFE</p>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about scroll-reveal">
+        <div class="about-container">
+            <h2 class="section-title">About SOUNDMAKING</h2>
+            <div class="about-intro">
+                <p class="intro-text">SOUNDMAKING is a professional audio post-production studio founded by two passionate audio engineers who share a commitment to sonic excellence. We specialize in bringing creative visions to life through cutting-edge audio technology and meticulous attention to detail.</p>
+            </div>
+            
+            <div class="owners-section">
+                <h3 class="owners-title">Meet Our Founders</h3>
+                <div class="owners-grid">
+                    <div class="owner-card">
+                        <div class="owner-photo">
+                            <div class="photo-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="owner-info">
+                            <h4>MATEUSZ ADAMCZYK</h4>
+                            <p class="owner-title">Co-Founder & Lead Audio Engineer</p>
+                            <p class="owner-description">With extensive experience in film and television audio post-production, Mateusz brings technical expertise and creative vision to every project. His attention to detail ensures that each mix meets the highest industry standards.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="owner-card">
+                        <div class="owner-photo">
+                            <div class="photo-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="owner-info">
+                            <h4>SEBASTIAN WITKOWSKI</h4>
+                            <p class="owner-title">Co-Founder & Sound Designer</p>
+                            <p class="owner-description">Sebastian's innovative approach to sound design and mixing has helped shape SOUNDMAKING's reputation for excellence. His creative solutions and technical mastery bring unique character to every audio project.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -614,15 +723,6 @@
         });
 
         // Portfolio item hover effects
-        document.querySelectorAll('.portfolio-item').forEach(item => {
-            item.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.05) rotateZ(2deg)';
-            });
-            
-            item.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1) rotateZ(0deg)';
-            });
-        });
     </script>
 </body>
 </html>
