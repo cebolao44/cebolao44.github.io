@@ -1,56 +1,518 @@
-<?php
-// =============================================================================
-// FILE: template-parts/hero-section.php
-// =============================================================================
-?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUNDMAKING - Professional Audio Post-Production</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<section id="home" class="hero">
-    <div class="hero-content fade-in-up">
-        <h1><?php bloginfo('name'); ?></h1>
-        <p class="tagline">
-            <?php 
-            $tagline = get_bloginfo('description');
-            echo $tagline ? esc_html($tagline) : __('PROFESSIONAL AUDIO POST-PRODUCTION THAT BRINGS YOUR VISION TO LIFE', 'soundmaking');
-            ?>
-        </p>
-    </div>
-</section>
+        :root {
+            --primary-color: #1a1a1a;
+            --accent-color: #ff6b35;
+            --secondary-color: #333;
+            --text-light: #f0f0f0;
+            --text-dark: #666;
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
 
-<?php
-// =============================================================================
-// FILE: template-parts/about-section.php
-// =============================================================================
-?>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-light);
+            background-color: var(--primary-color);
+        }
 
-<section id="about" class="about scroll-reveal">
-    <div class="about-container">
-        <h2 class="section-title"><?php _e('About SOUNDMAKING', 'soundmaking'); ?></h2>
-        <div class="about-intro">
-            <?php
-            $about_page = get_page_by_path('about');
-            if ($about_page) {
-                echo '<p class="intro-text">' . wp_trim_words($about_page->post_content, 50) . '</p>';
-            } else {
-                echo '<p class="intro-text">' . __('SOUNDMAKING is a professional audio post-production studio founded by two passionate audio engineers who share a commitment to sonic excellence. We specialize in bringing creative visions to life through cutting-edge audio technology and meticulous attention to detail.', 'soundmaking') . '</p>';
+        /* Header & Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu li a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-menu li a:hover {
+            color: var(--accent-color);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: var(--gradient-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="o" cx="50%" cy="40%" r="50%"><stop stop-color="%23FFF" stop-opacity=".5"/><stop offset="1" stop-color="%23FFF" stop-opacity="0"/></radialGradient></defs><rect width="100" height="20" fill="url(%23o)"/></svg>') repeat-x;
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            z-index: 1;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* About Section */
+        .about {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .about-intro {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .intro-text {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .owners-section {
+            margin-top: 3rem;
+        }
+
+        .owners-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+
+        .owners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .owner-card {
+            background: var(--secondary-color);
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .owner-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .owner-photo {
+            margin-bottom: 2rem;
+        }
+
+        .photo-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 107, 53, 0.1);
+            border: 3px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .photo-placeholder i {
+            font-size: 4rem;
+            color: var(--accent-color);
+        }
+
+        .owner-card:hover .photo-placeholder {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .owner-info h4 {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .owner-title {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .owner-description {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--accent-color);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: var(--secondary-color);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Portfolio Section */
+        .portfolio {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .portfolio-item {
+            background: var(--secondary-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .portfolio-content {
+            padding: 1.5rem;
+        }
+
+        .portfolio-item h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-item p {
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            background: var(--gradient-bg);
+            padding: 5rem 2rem;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .contact-item {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .contact-item i {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-color);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--secondary-color);
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-light);
+            font-size: 1.5rem;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
             }
-            ?>
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--primary-color);
+                flex-direction: column;
+                padding: 1rem 0;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-menu li {
+                margin: 0.5rem 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .tagline {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .owners-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .owner-card {
+                padding: 2rem;
+            }
+
+            .photo-placeholder {
+                width: 120px;
+                height: 120px;
+            }
+
+            .photo-placeholder i {
+                font-size: 3rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Scroll animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+        }
+
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">SOUNDMAKING</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
         </div>
-        
-        <div class="owners-section">
-            <h3 class="owners-title"><?php _e('Meet Our Founders', 'soundmaking'); ?></h3>
-            <div class="owners-grid">
-                <?php
-                // Get team members from a custom post type or customizer
-                $team_members = get_posts(array(
-                    'post_type' => 'team',
-                    'posts_per_page' => 2,
-                    'meta_key' => '_is_founder',
-                    'meta_value' => '1'
-                ));
-                
-                if (empty($team_members)) {
-                    // Fallback to default content
-                    ?>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content fade-in-up">
+            <h1>SOUNDMAKING</h1>
+            <p class="tagline">PROFESSIONAL AUDIO POST-PRODUCTION THAT BRINGS YOUR VISION TO LIFE</p>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about scroll-reveal">
+        <div class="about-container">
+            <h2 class="section-title">About SOUNDMAKING</h2>
+            <div class="about-intro">
+                <p class="intro-text">SOUNDMAKING is a professional audio post-production studio founded by two passionate audio engineers who share a commitment to sonic excellence. We specialize in bringing creative visions to life through cutting-edge audio technology and meticulous attention to detail.</p>
+            </div>
+            
+            <div class="owners-section">
+                <h3 class="owners-title">Meet Our Founders</h3>
+                <div class="owners-grid">
                     <div class="owner-card">
                         <div class="owner-photo">
                             <div class="photo-placeholder">
@@ -58,9 +520,9 @@
                             </div>
                         </div>
                         <div class="owner-info">
-                            <h4><?php _e('MATEUSZ ADAMCZYK', 'soundmaking'); ?></h4>
-                            <p class="owner-title"><?php _e('Co-Founder & Lead Audio Engineer', 'soundmaking'); ?></p>
-                            <p class="owner-description"><?php _e('With extensive experience in film and television audio post-production, Mateusz brings technical expertise and creative vision to every project. His attention to detail ensures that each mix meets the highest industry standards.', 'soundmaking'); ?></p>
+                            <h4>MATEUSZ ADAMCZYK</h4>
+                            <p class="owner-title">Co-Founder & Lead Audio Engineer</p>
+                            <p class="owner-description">With extensive experience in film and television audio post-production, Mateusz brings technical expertise and creative vision to every project. His attention to detail ensures that each mix meets the highest industry standards.</p>
                         </div>
                     </div>
                     
@@ -71,454 +533,173 @@
                             </div>
                         </div>
                         <div class="owner-info">
-                            <h4><?php _e('SEBASTIAN WITKOWSKI', 'soundmaking'); ?></h4>
-                            <p class="owner-title"><?php _e('Co-Founder & Sound Designer', 'soundmaking'); ?></p>
-                            <p class="owner-description"><?php _e('Sebastian\'s innovative approach to sound design and mixing has helped shape SOUNDMAKING\'s reputation for excellence. His creative solutions and technical mastery bring unique character to every audio project.', 'soundmaking'); ?></p>
+                            <h4>SEBASTIAN WITKOWSKI</h4>
+                            <p class="owner-title">Co-Founder & Sound Designer</p>
+                            <p class="owner-description">Sebastian's innovative approach to sound design and mixing has helped shape SOUNDMAKING's reputation for excellence. His creative solutions and technical mastery bring unique character to every audio project.</p>
                         </div>
                     </div>
-                    <?php
-                } else {
-                    foreach ($team_members as $member) {
-                        $photo = get_the_post_thumbnail($member->ID, 'medium', array('class' => 'owner-photo-img'));
-                        $position = get_post_meta($member->ID, '_position', true);
-                        ?>
-                        <div class="owner-card">
-                            <div class="owner-photo">
-                                <?php if ($photo): ?>
-                                    <?php echo $photo; ?>
-                                <?php else: ?>
-                                    <div class="photo-placeholder">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="owner-info">
-                                <h4><?php echo esc_html($member->post_title); ?></h4>
-                                <?php if ($position): ?>
-                                    <p class="owner-title"><?php echo esc_html($position); ?></p>
-                                <?php endif; ?>
-                                <p class="owner-description"><?php echo esc_html($member->post_content); ?></p>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                }
-                ?>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<?php
-// =============================================================================
-// FILE: template-parts/services-section.php
-// =============================================================================
-?>
-
-<section id="services" class="services scroll-reveal">
-    <h2 class="section-title"><?php _e('Our Services', 'soundmaking'); ?></h2>
-    <div class="services-grid">
-        <?php
-        $services = soundmaking_get_services();
-        
-        if ($services) {
-            foreach ($services as $service) {
-                $icon = get_post_meta($service->ID, '_service_icon', true) ?: 'fas fa-music';
-                ?>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="<?php echo esc_attr($icon); ?>"></i>
-                    </div>
-                    <h3><?php echo esc_html($service->post_title); ?></h3>
-                    <p><?php echo esc_html($service->post_excerpt ?: wp_trim_words($service->post_content, 25)); ?></p>
+    <!-- Services Section -->
+    <section id="services" class="services scroll-reveal">
+        <h2 class="section-title">Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-volume-up"></i>
                 </div>
-                <?php
-            }
-        } else {
-            // Fallback default services
-            $default_services = array(
-                array(
-                    'icon' => 'fas fa-volume-up',
-                    'title' => __('Audio Mixing & Mastering', 'soundmaking'),
-                    'description' => __('Professional mixing and mastering services that optimize your audio for cinema, TV, radio, and digital platforms. We ensure your sound translates perfectly across all mediums.', 'soundmaking')
-                ),
-                array(
-                    'icon' => 'fas fa-sparkles',
-                    'title' => __('Sound Design', 'soundmaking'),
-                    'description' => __('From custom sound effects to immersive soundscapes, we create bespoke audio elements that enhance your storytelling and captivate your audience.', 'soundmaking')
-                ),
-                array(
-                    'icon' => 'fas fa-tools',
-                    'title' => __('Audio Restoration', 'soundmaking'),
-                    'description' => __('State-of-the-art tools and AI-powered software to clean and restore poor quality recordings. We work magic on challenging audio sources.', 'soundmaking')
-                ),
-                array(
-                    'icon' => 'fas fa-film',
-                    'title' => __('Film & TV Post', 'soundmaking'),
-                    'description' => __('Complete audio post-production for films, documentaries, commercials, and TV series. 5.1 surround sound and Dolby Atmos mixing available.', 'soundmaking')
-                ),
-                array(
-                    'icon' => 'fas fa-podcast',
-                    'title' => __('Podcast Production', 'soundmaking'),
-                    'description' => __('End-to-end podcast production services including recording, editing, mixing, and mastering to broadcast-quality standards.', 'soundmaking')
-                ),
-                array(
-                    'icon' => 'fas fa-cog',
-                    'title' => __('Format Conversion', 'soundmaking'),
-                    'description' => __('Loudness compliance, frame rate conversions, and format adaptations to meet any delivery specification while preserving audio quality.', 'soundmaking')
-                ),
-            );
-            
-            foreach ($default_services as $service) {
-                ?>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="<?php echo esc_attr($service['icon']); ?>"></i>
-                    </div>
-                    <h3><?php echo esc_html($service['title']); ?></h3>
-                    <p><?php echo esc_html($service['description']); ?></p>
-                </div>
-                <?php
-            }
-        }
-        ?>
-    </div>
-</section>
-
-<?php
-// =============================================================================
-// FILE: template-parts/portfolio-section.php
-// =============================================================================
-?>
-
-<section id="portfolio" class="portfolio scroll-reveal">
-    <h2 class="section-title"><?php _e('Recent Work', 'soundmaking'); ?></h2>
-    <div class="portfolio-grid">
-        <?php
-        $portfolio_items = soundmaking_get_portfolio_items(6);
-        
-        if ($portfolio_items) {
-            foreach ($portfolio_items as $item) {
-                $project_type = get_post_meta($item->ID, '_project_type', true);
-                $client_name = get_post_meta($item->ID, '_client_name', true);
-                $audio_file = get_post_meta($item->ID, '_audio_file', true);
-                ?>
-                <div class="portfolio-item" data-project-id="<?php echo $item->ID; ?>">
-                    <?php if (has_post_thumbnail($item->ID)): ?>
-                        <div class="portfolio-image">
-                            <?php echo get_the_post_thumbnail($item->ID, 'medium'); ?>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <div class="portfolio-content">
-                        <h4><?php echo esc_html($item->post_title); ?></h4>
-                        <p><?php echo esc_html($project_type ?: $item->post_excerpt); ?></p>
-                        <?php if ($client_name): ?>
-                            <span class="client-name"><?php echo esc_html($client_name); ?></span>
-                        <?php endif; ?>
-                        <?php if ($audio_file): ?>
-                            <div class="audio-player">
-                                <audio controls preload="none">
-                                    <source src="<?php echo esc_url($audio_file); ?>" type="audio/mpeg">
-                                    <?php _e('Your browser does not support the audio element.', 'soundmaking'); ?>
-                                </audio>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <?php
-            }
-        } else {
-            // Fallback default portfolio items
-            $default_portfolio = array(
-                array(
-                    'title' => __('Feature Film Trailer', 'soundmaking'),
-                    'description' => __('5.1 surround sound mix for major studio release', 'soundmaking')
-                ),
-                array(
-                    'title' => __('Netflix Series', 'soundmaking'),
-                    'description' => __('Complete audio post-production for 8-episode series', 'soundmaking')
-                ),
-                array(
-                    'title' => __('Commercial Campaign', 'soundmaking'),
-                    'description' => __('Multi-platform audio mixing for global brand', 'soundmaking')
-                ),
-                array(
-                    'title' => __('Documentary Film', 'soundmaking'),
-                    'description' => __('Audio restoration and mixing for award-winning doc', 'soundmaking')
-                ),
-                array(
-                    'title' => __('Music Video', 'soundmaking'),
-                    'description' => __('Creative sound design and mix for viral content', 'soundmaking')
-                ),
-                array(
-                    'title' => __('Podcast Series', 'soundmaking'),
-                    'description' => __('Full production for top-charting business podcast', 'soundmaking')
-                ),
-            );
-            
-            foreach ($default_portfolio as $item) {
-                ?>
-                <div class="portfolio-item">
-                    <div class="portfolio-content">
-                        <h4><?php echo esc_html($item['title']); ?></h4>
-                        <p><?php echo esc_html($item['description']); ?></p>
-                    </div>
-                </div>
-                <?php
-            }
-        }
-        ?>
-    </div>
-    
-    <?php if ($portfolio_items && count($portfolio_items) >= 6): ?>
-        <div class="portfolio-more">
-            <a href="<?php echo get_post_type_archive_link('portfolio'); ?>" class="btn btn-primary">
-                <?php _e('View All Projects', 'soundmaking'); ?>
-            </a>
-        </div>
-    <?php endif; ?>
-</section>
-
-<?php
-// =============================================================================
-// FILE: template-parts/contact-section.php
-// =============================================================================
-?>
-
-<section id="contact" class="contact scroll-reveal">
-    <div class="contact-container">
-        <h2 class="section-title"><?php _e('Get In Touch', 'soundmaking'); ?></h2>
-        <p><?php _e('Ready to elevate your audio? Let\'s discuss your project and bring your vision to life.', 'soundmaking'); ?></p>
-        
-        <?php
-        // Display contact form messages
-        if (isset($_GET['contact'])) {
-            if ($_GET['contact'] === 'success') {
-                echo '<div class="contact-message success">' . __('Thank you! Your message has been sent successfully.', 'soundmaking') . '</div>';
-            } elseif ($_GET['contact'] === 'error') {
-                echo '<div class="contact-message error">' . __('Sorry, there was an error sending your message. Please try again.', 'soundmaking') . '</div>';
-            }
-        }
-        ?>
-        
-        <!-- Contact Form -->
-        <form class="contact-form" method="POST" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
-            <?php wp_nonce_field('soundmaking_contact', 'contact_nonce'); ?>
-            <input type="hidden" name="action" value="soundmaking_contact">
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="contact_name"><?php _e('Name *', 'soundmaking'); ?></label>
-                    <input type="text" id="contact_name" name="contact_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="contact_email"><?php _e('Email *', 'soundmaking'); ?></label>
-                    <input type="email" id="contact_email" name="contact_email" required>
-                </div>
+                <h3>Audio Mixing & Mastering</h3>
+                <p>Professional mixing and mastering services that optimize your audio for cinema, TV, radio, and digital platforms. We ensure your sound translates perfectly across all mediums.</p>
             </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="contact_phone"><?php _e('Phone', 'soundmaking'); ?></label>
-                    <input type="tel" id="contact_phone" name="contact_phone">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-sparkles"></i>
                 </div>
-                <div class="form-group">
-                    <label for="contact_project_type"><?php _e('Project Type', 'soundmaking'); ?></label>
-                    <select id="contact_project_type" name="contact_project_type">
-                        <option value=""><?php _e('Select a service', 'soundmaking'); ?></option>
-                        <option value="mixing"><?php _e('Audio Mixing & Mastering', 'soundmaking'); ?></option>
-                        <option value="sound-design"><?php _e('Sound Design', 'soundmaking'); ?></option>
-                        <option value="restoration"><?php _e('Audio Restoration', 'soundmaking'); ?></option>
-                        <option value="film-tv"><?php _e('Film & TV Post', 'soundmaking'); ?></option>
-                        <option value="podcast"><?php _e('Podcast Production', 'soundmaking'); ?></option>
-                        <option value="format-conversion"><?php _e('Format Conversion', 'soundmaking'); ?></option>
-                        <option value="other"><?php _e('Other', 'soundmaking'); ?></option>
-                    </select>
+                <h3>Sound Design</h3>
+                <p>From custom sound effects to immersive soundscapes, we create bespoke audio elements that enhance your storytelling and captivate your audience.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-tools"></i>
                 </div>
+                <h3>Audio Restoration</h3>
+                <p>State-of-the-art tools and AI-powered software to clean and restore poor quality recordings. We work magic on challenging audio sources.</p>
             </div>
-            
-            <div class="form-group">
-                <label for="contact_message"><?php _e('Project Details *', 'soundmaking'); ?></label>
-                <textarea id="contact_message" name="contact_message" rows="6" required placeholder="<?php _e('Tell us about your project, timeline, and any specific requirements...', 'soundmaking'); ?>"></textarea>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h3>Film & TV Post</h3>
+                <p>Complete audio post-production for films, documentaries, commercials, and TV series. 5.1 surround sound and Dolby Atmos mixing available.</p>
             </div>
-            
-            <button type="submit" class="btn btn-primary">
-                <?php _e('Send Message', 'soundmaking'); ?>
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </form>
-        
-        <div class="contact-info">
-            <div class="contact-item">
-                <i class="fas fa-envelope"></i>
-                <h4><?php _e('Email', 'soundmaking'); ?></h4>
-                <p>
-                    <a href="mailto:<?php echo esc_attr(get_theme_mod('soundmaking_email', 'hello@soundmaking.com')); ?>">
-                        <?php echo esc_html(get_theme_mod('soundmaking_email', 'hello@soundmaking.com')); ?>
-                    </a>
-                </p>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-podcast"></i>
+                </div>
+                <h3>Podcast Production</h3>
+                <p>End-to-end podcast production services including recording, editing, mixing, and mastering to broadcast-quality standards.</p>
             </div>
-            <div class="contact-item">
-                <i class="fas fa-phone"></i>
-                <h4><?php _e('Phone', 'soundmaking'); ?></h4>
-                <p>
-                    <a href="tel:<?php echo esc_attr(str_replace(array(' ', '(', ')', '-'), '', get_theme_mod('soundmaking_phone', '+15551234567'))); ?>">
-                        <?php echo esc_html(get_theme_mod('soundmaking_phone', '+1 (555) 123-4567')); ?>
-                    </a>
-                </p>
-            </div>
-            <div class="contact-item">
-                <i class="fas fa-clock"></i>
-                <h4><?php _e('Hours', 'soundmaking'); ?></h4>
-                <p><?php echo wp_kses_post(get_theme_mod('soundmaking_hours', 'Mon - Fri: 9AM - 8PM<br>Weekend by appointment')); ?></p>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <h3>Format Conversion</h3>
+                <p>Loudness compliance, frame rate conversions, and format adaptations to meet any delivery specification while preserving audio quality.</p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<?php
-// =============================================================================
-// FILE: page.php (Static pages template)
-// =============================================================================
-?>
-
-<?php get_header(); ?>
-
-<main class="main-content page-content">
-    <div class="container">
-        <?php while (have_posts()): the_post(); ?>
-            <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-                <header class="page-header">
-                    <h1 class="page-title"><?php the_title(); ?></h1>
-                </header>
-                
-                <div class="page-content-area">
-                    <?php
-                    the_content();
-                    
-                    wp_link_pages(array(
-                        'before' => '<div class="page-links">' . __('Pages:', 'soundmaking'),
-                        'after' => '</div>',
-                    ));
-                    ?>
-                </div>
-            </article>
-        <?php endwhile; ?>
-    </div>
-</main>
-
-<?php get_footer(); ?>
-
-<?php
-// =============================================================================
-// FILE: single-portfolio.php (Portfolio item template)
-// =============================================================================
-?>
-
-<?php get_header(); ?>
-
-<main class="main-content portfolio-single">
-    <div class="container">
-        <?php while (have_posts()): the_post(); ?>
-            <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-                <header class="portfolio-header">
-                    <h1 class="portfolio-title"><?php the_title(); ?></h1>
-                    
-                    <div class="portfolio-meta">
-                        <?php
-                        $project_type = get_post_meta(get_the_ID(), '_project_type', true);
-                        $client_name = get_post_meta(get_the_ID(), '_client_name', true);
-                        ?>
-                        
-                        <?php if ($project_type): ?>
-                            <span class="project-type"><?php echo esc_html($project_type); ?></span>
-                        <?php endif; ?>
-                        
-                        <?php if ($client_name): ?>
-                            <span class="client-name"><?php _e('Client:', 'soundmaking'); ?> <?php echo esc_html($client_name); ?></span>
-                        <?php endif; ?>
-                    </div>
-                </header>
-                
-                <?php if (has_post_thumbnail()): ?>
-                    <div class="portfolio-featured-image">
-                        <?php the_post_thumbnail('large'); ?>
-                    </div>
-                <?php endif; ?>
-                
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio scroll-reveal">
+        <h2 class="section-title">Recent Work</h2>
+        <div class="portfolio-grid">
+            <div class="portfolio-item">
                 <div class="portfolio-content">
-                    <?php the_content(); ?>
+                    <h4>Feature Film Trailer</h4>
+                    <p>5.1 surround sound mix for major studio release</p>
                 </div>
-                
-                <?php
-                $audio_file = get_post_meta(get_the_ID(), '_audio_file', true);
-                if ($audio_file):
-                ?>
-                    <div class="portfolio-audio">
-                        <h3><?php _e('Audio Sample', 'soundmaking'); ?></h3>
-                        <audio controls preload="metadata">
-                            <source src="<?php echo esc_url($audio_file); ?>" type="audio/mpeg">
-                            <?php _e('Your browser does not support the audio element.', 'soundmaking'); ?>
-                        </audio>
-                    </div>
-                <?php endif; ?>
-                
-                <nav class="portfolio-navigation">
-                    <div class="nav-previous">
-                        <?php previous_post_link('%link', '&larr; %title', true); ?>
-                    </div>
-                    <div class="nav-next">
-                        <?php next_post_link('%link', '%title &rarr;', true); ?>
-                    </div>
-                </nav>
-            </article>
-        <?php endwhile; ?>
-    </div>
-</main>
+            </div>
+            <div class="portfolio-item">
+                <div class="portfolio-content">
+                    <h4>Netflix Series</h4>
+                    <p>Complete audio post-production for 8-episode series</p>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <div class="portfolio-content">
+                    <h4>Commercial Campaign</h4>
+                    <p>Multi-platform audio mixing for global brand</p>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <div class="portfolio-content">
+                    <h4>Documentary Film</h4>
+                    <p>Audio restoration and mixing for award-winning doc</p>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <div class="portfolio-content">
+                    <h4>Music Video</h4>
+                    <p>Creative sound design and mix for viral content</p>
+                </div>
+            </div>
+            <div class="portfolio-item">
+                <div class="portfolio-content">
+                    <h4>Podcast Series</h4>
+                    <p>Full production for top-charting business podcast</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<?php get_footer(); ?>
+    <!-- Contact Section -->
+    <section id="contact" class="contact scroll-reveal">
+        <div class="contact-container">
+            <h2 class="section-title">Get In Touch</h2>
+            <p>Ready to elevate your audio? Let's discuss your project and bring your vision to life.</p>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Email</h4>
+                    <p>hello@soundmaking.com</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <h4>Phone</h4>
+                    <p>+1 (555) 123-4567</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <h4>Hours</h4>
+                    <p>Mon - Fri: 9AM - 8PM<br>Weekend by appointment</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<?php
-// =============================================================================
-// FILE: assets/js/main.js (JavaScript file)
-// =============================================================================
-?>
+    <!-- Footer -->
+    <footer class="footer">
+        <div>
+            <p>&copy; 2025 SOUNDMAKING. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
 
-/* SOUNDMAKING WordPress Theme JavaScript */
-
-(function($) {
-    'use strict';
-    
-    $(document).ready(function() {
-        
+    <script>
         // Mobile menu toggle
-        $('.mobile-menu-toggle').on('click', function() {
-            $('.nav-menu').toggleClass('active');
-            $(this).find('i').toggleClass('fa-bars fa-times');
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
         });
-        
+
         // Smooth scrolling for navigation links
-        $('a[href^="#"]').on('click', function(e) {
-            e.preventDefault();
-            const target = $(this.getAttribute('href'));
-            if (target.length) {
-                $('html, body').animate({
-                    scrollTop: target.offset().top - 80
-                }, 800);
-                
-                // Close mobile menu if open
-                $('.nav-menu').removeClass('active');
-                $('.mobile-menu-toggle i').removeClass('fa-times').addClass('fa-bars');
-            }
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
-        
+
         // Scroll animations
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
-        
+
         const observer = new IntersectionObserver(function(entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -526,315 +707,23 @@
                 }
             });
         }, observerOptions);
-        
-        $('.scroll-reveal').each(function() {
-            observer.observe(this);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
         });
-        
+
         // Header background on scroll
-        $(window).on('scroll', function() {
-            const header = $('.header');
-            if ($(window).scrollTop() > 100) {
-                header.css('background', 'rgba(26, 26, 26, 0.98)');
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(26, 26, 26, 0.98)';
             } else {
-                header.css('background', 'rgba(26, 26, 26, 0.95)');
+                header.style.background = 'rgba(26, 26, 26, 0.95)';
             }
         });
-        
-        // Contact form submission
-        $('.contact-form').on('submit', function(e) {
-            e.preventDefault();
-            
-            const form = $(this);
-            const submitBtn = form.find('button[type="submit"]');
-            const originalText = submitBtn.html();
-            
-            // Show loading state
-            submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Sending...').prop('disabled', true);
-            
-            $.ajax({
-                type: 'POST',
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function(response) {
-                    // Show success message
-                    form.before('<div class="contact-message success">Thank you! Your message has been sent successfully.</div>');
-                    form[0].reset();
-                },
-                error: function() {
-                    // Show error message
-                    form.before('<div class="contact-message error">Sorry, there was an error sending your message. Please try again.</div>');
-                },
-                complete: function() {
-                    // Reset button
-                    submitBtn.html(originalText).prop('disabled', false);
-                    
-                    // Remove message after 5 seconds
-                    setTimeout(function() {
-                        $('.contact-message').fadeOut();
-                    }, 5000);
-                }
-            });
-        });
-        
+
         // Portfolio item hover effects
-        $('.portfolio-item').on('mouseenter', function() {
-            $(this).find('audio').each(function() {
-                // Preload audio on hover for better UX
-                this.load();
-            });
-        });
-        
-        // Custom audio player styling (optional)
-        $('audio').each(function() {
-            const audio = this;
-            $(audio).on('loadstart', function() {
-                $(this).closest('.portfolio-item').addClass('has-audio');
-            });
-        });
-        
-        // Form validation
-        $('input[required], textarea[required]').on('blur', function() {
-            const field = $(this);
-            if (!field.val().trim()) {
-                field.addClass('error');
-            } else {
-                field.removeClass('error');
-            }
-        });
-        
-        $('input[type="email"]').on('blur', function() {
-            const email = $(this).val();
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (email && !emailRegex.test(email)) {
-                $(this).addClass('error');
-            } else {
-                $(this).removeClass('error');
-            }
-        });
-        
-    });
-    
-})(jQuery);
+    </script>
+</body>
+</html>
 
-<?php
-// =============================================================================
-// FILE: 404.php (Error page template)
-// =============================================================================
-?>
-
-<?php get_header(); ?>
-
-<main class="main-content error-404">
-    <div class="container">
-        <div class="error-content">
-            <h1 class="error-title"><?php _e('404', 'soundmaking'); ?></h1>
-            <h2 class="error-subtitle"><?php _e('Page Not Found', 'soundmaking'); ?></h2>
-            <p class="error-message">
-                <?php _e('The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.', 'soundmaking'); ?>
-            </p>
-            
-            <div class="error-actions">
-                <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-primary">
-                    <?php _e('Go Home', 'soundmaking'); ?>
-                </a>
-                <a href="<?php echo esc_url(home_url('/#contact')); ?>" class="btn btn-secondary">
-                    <?php _e('Contact Us', 'soundmaking'); ?>
-                </a>
-            </div>
-            
-            <div class="error-search">
-                <h3><?php _e('Search Our Site', 'soundmaking'); ?></h3>
-                <?php get_search_form(); ?>
-            </div>
-        </div>
-    </div>
-</main>
-
-<?php get_footer(); ?>
-
-<?php
-// =============================================================================
-// Additional CSS that needs to be added to style.css
-// =============================================================================
-?>
-
-/* Additional WordPress-specific styles to add to your existing CSS */
-
-/* Contact Form Styles */
-.contact-form {
-    max-width: 600px;
-    margin: 3rem auto;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: var(--text-light);
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid rgba(255, 107, 53, 0.3);
-    border-radius: 5px;
-    background: rgba(26, 26, 26, 0.8);
-    color: var(--text-light);
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--accent-color);
-}
-
-.form-group input.error,
-.form-group textarea.error {
-    border-color: #ff4444;
-}
-
-.btn {
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: var(--accent-color);
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #e55a2b;
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: var(--text-light);
-    border: 1px solid var(--text-light);
-}
-
-.btn-secondary:hover {
-    background: var(--text-light);
-    color: var(--primary-color);
-}
-
-.contact-message {
-    padding: 1rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.contact-message.success {
-    background: rgba(76, 175, 80, 0.2);
-    border: 1px solid #4caf50;
-    color: #4caf50;
-}
-
-.contact-message.error {
-    background: rgba(244, 67, 54, 0.2);
-    border: 1px solid #f44336;
-    color: #f44336;
-}
-
-/* Portfolio Audio Players */
-.audio-player {
-    margin-top: 1rem;
-}
-
-.audio-player audio {
-    width: 100%;
-    height: 40px;
-}
-
-/* 404 Error Page */
-.error-404 {
-    padding: 5rem 2rem;
-    text-align: center;
-}
-
-.error-title {
-    font-size: 8rem;
-    color: var(--accent-color);
-    margin-bottom: 1rem;
-    line-height: 1;
-}
-
-.error-subtitle {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: var(--text-light);
-}
-
-.error-message {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: var(--text-dark);
-}
-
-.error-actions {
-    margin-bottom: 3rem;
-}
-
-.error-actions .btn {
-    margin: 0 1rem;
-}
-
-.error-search {
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-/* Responsive Form Styles */
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .contact-form {
-        padding: 1.5rem;
-    }
-    
-    .error-title {
-        font-size: 5rem;
-    }
-    
-    .error-actions .btn {
-        display: block;
-        margin: 1rem auto;
-        width: 200px;
-        justify-content: center;
-    }
-}
